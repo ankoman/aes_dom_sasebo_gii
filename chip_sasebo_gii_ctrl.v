@@ -37,7 +37,7 @@
 module CHIP_SASEBO_GII_CTRL(cfg_din, cfg_mosi, cfg_fcsb, cfg_cclk, 
 								cfg_progn, cfg_csn, cfg_initn, cfg_rdwrn, cfg_busy, 
 								cfg_done, cfg_done_alt, led, clkin, rstnin, uart_rx,
-								uart_tx, run, trg);
+								uart_tx, run_, trg, input_pulse, clk_glitch);
 localparam len_din = 128*2; // N = 0
 localparam len_dout = 128;  // N = 0
 
@@ -45,7 +45,7 @@ localparam len_dout = 128;  // N = 0
    // SelectMap configuration
    input         cfg_din, cfg_mosi, cfg_fcsb, cfg_cclk;
    input         cfg_progn, cfg_csn, cfg_initn, cfg_rdwrn, cfg_busy;
-   input         cfg_done, cfg_done_alt;
+   input         cfg_done, cfg_done_alt, input_pulse;
 
    // LED, dip switch, clock and reset
    output [7:0]  led;
@@ -55,12 +55,12 @@ localparam len_dout = 128;  // N = 0
    
    // For AES DOM
    input uart_rx;
-   output uart_tx, run, trg;
+   output uart_tx, run_, trg, clk_glitch;
 
    //------------------------------------------------
    // Internal clock
    wire          clk, rst;
-     
+     assign run_ = input_pulse;
    // etc
    reg [23:0]    cnt;
   
@@ -139,7 +139,7 @@ localparam len_dout = 128;  // N = 0
     
     
     VerilogAESWrapper DUT(
-        .ClkxCI(clk),
+        .ClkxCI(clk_glitch),
         .RstxBI(rst_n),
         .PTxDI(pin),
         .KxDI(kin),
@@ -204,17 +204,17 @@ localparam len_dout = 128;  // N = 0
    //------------------------------------------------
    MK_EXTCLKRST mk_clkrst  (.clkin(clkin), .rstnin(rstnin),
                          .cfg_done(cfg_done & cfg_done_alt),
-                         .clk(clk), .rst(rst));
-   
+                         .clk(clk), .rst(rst), .input_pulse(input_pulse), .clk_glitch(clk_glitch));
+
 endmodule // CHIP_SASEBO_GII_CTRL
 
 //================================================ MK_CLKRST
-module MK_EXTCLKRST (clkin, rstnin, cfg_done, clk, rst);
+module MK_EXTCLKRST (clkin, rstnin, cfg_done, clk, rst, input_pulse, clk_glitch);
    //synthesis attribute keep_hierarchy of MK_CLKRST is no;
    
    //------------------------------------------------
-   input  clkin, rstnin, cfg_done;
-   output clk, rst;
+   input  clkin, rstnin, cfg_done, input_pulse;
+   output clk, rst, clk_glitch;
    
    //------------------------------------------------
    wire   rst_itrl, rst_dll;
@@ -228,6 +228,11 @@ module MK_EXTCLKRST (clkin, rstnin, cfg_done, clk, rst);
    //------------------------------------------------ clock
    IBUFG u10 (.I(clkin), .O(refclk)); 
    BUFG  u13 (.I(refclk), .O(clk));
+
+   wire clk_glitch_t;
+   assign clk_glitch_t = input_pulse | refclk;
+   BUFG  u14 (.I(clk_glitch_t), .O(clk_glitch));
+
 
    //------------------------------------------------ reset
    MK_RST u20 (.locked(rstnin&cfg_done), .clk(clk),  .rst(rst));

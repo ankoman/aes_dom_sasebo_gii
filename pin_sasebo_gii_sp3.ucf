@@ -72,6 +72,9 @@ NET "led<7>" LOC="R13" |IOSTANDARD="LVCMOS33" |SLEW="SLOW" |DRIVE=2 |TIG; #LED19
 #############
 # SelectMap #
 #############
+NET "input_pulse"      LOC="C11" |IOSTANDARD="LVCMOS33"; # SPI din
+NET "clk_glitch" LOC="M3" |IOSTANDARD="LVCMOS33" |SLEW="FAST" |DRIVE=2 |TIG; # J9.28
+
 NET "cfg_din"      LOC="N14" |IOSTANDARD="LVCMOS33"; # SPI din
 NET "cfg_mosi"     LOC="P15" |IOSTANDARD="LVCMOS33"; # SPI mosi
 NET "cfg_fcsb"     LOC="R15" |IOSTANDARD="LVCMOS33"; # SPI fcs_b
@@ -87,5 +90,5 @@ NET "cfg_done_alt" LOC="K11" |IOSTANDARD="LVCMOS33"; #
 NET "uart_tx" LOC="G1" |IOSTANDARD="LVCMOS33" |SLEW="SLOW" |DRIVE=2 |TIG; # J9.7 yellow
 NET "uart_rx" LOC="F1" |IOSTANDARD="LVCMOS33"; # J9.8 orange
 
-NET "run" LOC="C1" |IOSTANDARD="LVCMOS33" |SLEW="SLOW" |DRIVE=2 |TIG; # J9.1
+NET "run_" LOC="C1" |IOSTANDARD="LVCMOS33" |SLEW="SLOW" |DRIVE=2 |TIG; # J9.1
 NET "trg" LOC="C2" |IOSTANDARD="LVCMOS33" |SLEW="SLOW" |DRIVE=2 |TIG; # J9.2

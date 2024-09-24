@@ -79,7 +79,7 @@ def main():
                 #入力
                 sendCommand(WRITE, ADDR_AES, (key << 128) + ptxt, com)
                 #トリガ
-                sendCommand(WRITE, ADDR_TRG, 0xa0, com)
+                sendCommand(WRITE, ADDR_TRG, 0x9f, com)
                 #位相
                 # sendCommand(WRITE, ADDR_PS, 0x00, com)
                 # #RUN
