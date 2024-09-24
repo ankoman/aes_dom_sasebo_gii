@@ -1,0 +1,11 @@
+*
+!.gitignore
+!README.md
+!aes_top_wrapper.vhd
+!chip_sasebo_gii_ctrl.v
+!pin_sasebo_gii_sp3.ucf
+!UART_BYTE.v
+!UART_CTRL.v
+!VerilogAESWrapper.v
+!/aes-dom-master/
+!rcon.vhdl

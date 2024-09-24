@@ -1,0 +1,91 @@
+# -------------------------------------------------------------------------
+# Pin assignment of Spartan-3A on SASEBO-GII
+# 
+# File name   : pin_sasebo_gii_sp3.ucf
+# Version     : 1.3
+# Created     : APR/02/2012
+# Last update : APR/11/2012
+# Desgined by : Toshihiro Katashita
+# 
+# 
+# Copyright (C) 2012 AIST
+# 
+# By using this code, you agree to the following terms and conditions.
+# 
+# This code is copyrighted by AIST ("us").
+# 
+# Permission is hereby granted to copy, reproduce, redistribute or
+# otherwise use this code as long as: there is no monetary profit gained
+# specifically from the use or reproduction of this code, it is not sold,
+# rented, traded or otherwise marketed, and this copyright notice is
+# included prominently in any copy made.
+# 
+# We shall not be liable for any damages, including without limitation
+# direct, indirect, incidental, special or consequential damages arising
+# from the use of this code.
+# 
+# When you publish any results arising from the use of this code, we will
+# appreciate it if you can cite our webpage.
+# (http://www.aist.go.jp/aist_e/research_results/publications/synthesiology_e/vol3_no1/vol03_01_p86_p95.pdf)
+# -------------------------------------------------------------------------
+
+#================================================�@Timing constraint
+NET "clkin" TNM_NET = "clkin_grp" ;
+TIMESPEC "TS_clkin" = PERIOD : "clkin_grp" : 20.000 ns HIGH 50.0%; #Osc clk & Ext clk
+
+#================================================ Pin assignment
+#------------------------------------------------ Clock, reset, LED, and SW.
+#################
+# CLOCK / RESET #
+#################
+# NET "clkin"  LOC="R9"  |IOSTANDARD="LVCMOS33"; # Osc clock
+NET "clkin"  LOC="C10"  |IOSTANDARD="LVCMOS33"; # Ext clock
+
+NET "clkin" CLOCK_DEDICATED_ROUTE = FALSE; # Uncoment for SP3A-50
+NET "rstnin" LOC="L7"  |IOSTANDARD="LVCMOS33"; # Reset
+
+##########
+# SWITCH #
+##########
+#NET "dipsw<0>" LOC="F4" |IOSTANDARD="LVCMOS33"; # SW7-1
+#NET "dipsw<1>" LOC="E4" |IOSTANDARD="LVCMOS33"; # SW7-2
+#NET "dipsw<2>" LOC="J7" |IOSTANDARD="LVCMOS33"; # SW7-3
+#NET "dipsw<3>" LOC="H7" |IOSTANDARD="LVCMOS33"; # SW7-4
+#NET "dipsw<4>" LOC="K6" |IOSTANDARD="LVCMOS33"; # SW7-5
+#NET "dipsw<5>" LOC="K5" |IOSTANDARD="LVCMOS33"; # SW7-6
+#NET "dipsw<6>" LOC="L6" |IOSTANDARD="LVCMOS33"; # SW7-7
+#NET "dipsw<7>" LOC="L5" |IOSTANDARD="LVCMOS33"; # SW7-8
+
+#######
+# LED #
+#######
+NET "led<0>" LOC="T10" |IOSTANDARD="LVCMOS33" |SLEW="SLOW" |DRIVE=2 |TIG; #LED12
+NET "led<1>" LOC="R11" |IOSTANDARD="LVCMOS33" |SLEW="SLOW" |DRIVE=2 |TIG; #LED13
+NET "led<2>" LOC="T11" |IOSTANDARD="LVCMOS33" |SLEW="SLOW" |DRIVE=2 |TIG; #LED14
+NET "led<3>" LOC="N11" |IOSTANDARD="LVCMOS33" |SLEW="SLOW" |DRIVE=2 |TIG; #LED15
+NET "led<4>" LOC="P11" |IOSTANDARD="LVCMOS33" |SLEW="SLOW" |DRIVE=2 |TIG; #LED16
+NET "led<5>" LOC="P12" |IOSTANDARD="LVCMOS33" |SLEW="SLOW" |DRIVE=2 |TIG; #LED17
+NET "led<6>" LOC="T12" |IOSTANDARD="LVCMOS33" |SLEW="SLOW" |DRIVE=2 |TIG; #LED18
+NET "led<7>" LOC="R13" |IOSTANDARD="LVCMOS33" |SLEW="SLOW" |DRIVE=2 |TIG; #LED19
+
+
+#############
+# SelectMap #
+#############
+NET "cfg_din"      LOC="N14" |IOSTANDARD="LVCMOS33"; # SPI din
+NET "cfg_mosi"     LOC="P15" |IOSTANDARD="LVCMOS33"; # SPI mosi
+NET "cfg_fcsb"     LOC="R15" |IOSTANDARD="LVCMOS33"; # SPI fcs_b
+NET "cfg_cclk"     LOC="N13" |IOSTANDARD="LVCMOS33"; # Configuration clock
+NET "cfg_progn"    LOC="T13" |IOSTANDARD="LVCMOS33"; # Initialize
+NET "cfg_initn"    LOC="N16" |IOSTANDARD="LVCMOS33"; #
+NET "cfg_csn"      LOC="J13" |IOSTANDARD="LVCMOS33"; # 
+NET "cfg_rdwrn"    LOC="J12" |IOSTANDARD="LVCMOS33"; # 
+NET "cfg_busy"     LOC="K12" |IOSTANDARD="LVCMOS33"; # 
+NET "cfg_done"     LOC="P16" |IOSTANDARD="LVCMOS33"; # 
+NET "cfg_done_alt" LOC="K11" |IOSTANDARD="LVCMOS33"; # 
+
+NET "uart_tx" LOC="G1" |IOSTANDARD="LVCMOS33" |SLEW="SLOW" |DRIVE=2 |TIG; # J9.7 yellow
+NET "uart_rx" LOC="F1" |IOSTANDARD="LVCMOS33"; # J9.8 orange
+
+NET "run" LOC="C1" |IOSTANDARD="LVCMOS33" |SLEW="SLOW" |DRIVE=2 |TIG; # J9.1
+NET "trg" LOC="C2" |IOSTANDARD="LVCMOS33" |SLEW="SLOW" |DRIVE=2 |TIG; # J9.2
