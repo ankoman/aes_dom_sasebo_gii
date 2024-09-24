@@ -9,3 +9,5 @@
 !VerilogAESWrapper.v
 !/aes-dom-master/
 !rcon.vhdl
+!/script/
+!test.py
