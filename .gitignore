@@ -7,6 +7,8 @@
 !UART_BYTE.v
 !UART_CTRL.v
 !VerilogAESWrapper.v
+!glitchy-clock_generator.v
+!dcm_vphase_wrapper.v
 !/aes-dom-master/
 !rcon.vhdl
 !/script/

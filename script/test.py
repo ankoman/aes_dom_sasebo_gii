@@ -27,7 +27,8 @@ RUN = 0x40
 
 ADDR_AES = 0x01
 ADDR_TRG = 0x02
-ADDR_PS  = 0x03
+ADDR_Td  = 0x03
+ADDR_Tw  = 0x04
 
 #######################################################################################
 ######################################Function#########################################
@@ -67,6 +68,7 @@ def main():
     # key = 0x2b7e151628aed2a6abf7158809cf4f3c
     aes = AES.new(key.to_bytes(16, 'big'), AES.MODE_ECB)
     fault_cnt = 0
+    list_ptxt = []
     list_correct_ctxt = []
     list_fpga_ctxt = []
     with Serial(port="COM6",baudrate=115200,bytesize=8, parity="N", stopbits=1, timeout=3, xonxoff=0, rtscts=0, writeTimeout=3, dsrdtr=None) as com:
@@ -75,13 +77,16 @@ def main():
                 # print('\nLoop: %d' %loop)
 
                 ptxt = random.randint(0, 2**128-1)
+                list_ptxt.append(ptxt)
                                 
                 #入力
                 sendCommand(WRITE, ADDR_AES, (key << 128) + ptxt, com)
                 #トリガ
-                sendCommand(WRITE, ADDR_TRG, 0xa0, com)
-                #位相
-                # sendCommand(WRITE, ADDR_PS, 0x00, com)
+                sendCommand(WRITE, ADDR_TRG, 0xc8, com)
+                #ディレイ
+                sendCommand(WRITE, ADDR_Td, 0xff, com)
+                #幅
+                sendCommand(WRITE, ADDR_Tw, 0x19, com)
                 # #RUN
                 sendCommand(RUN, None, None, com)
                 
@@ -100,7 +105,9 @@ def main():
                     print_wrong_byte(res, ans)
                     # exit()
             print(fault_cnt)
-            
+
+    with open(r'C:\Users\seedtyps\Desktop\ptxt.pkl', 'wb') as f:
+        pickle.dump(list_ptxt, f)       
     with open(r'C:\Users\seedtyps\Desktop\correct_ctxt.pkl', 'wb') as f:
         pickle.dump(list_correct_ctxt, f)
     with open(r'C:\Users\seedtyps\Desktop\result_ctxt.pkl', 'wb') as f:

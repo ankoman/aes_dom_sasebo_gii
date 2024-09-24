@@ -28,11 +28,9 @@
 # appreciate it if you can cite our webpage.
 # (http://www.aist.go.jp/aist_e/research_results/publications/synthesiology_e/vol3_no1/vol03_01_p86_p95.pdf)
 # -------------------------------------------------------------------------
-
 #================================================�@Timing constraint
 NET "clkin" TNM_NET = "clkin_grp" ;
 TIMESPEC "TS_clkin" = PERIOD : "clkin_grp" : 20.000 ns HIGH 50.0%; #Osc clk & Ext clk
-
 #================================================ Pin assignment
 #------------------------------------------------ Clock, reset, LED, and SW.
 #################
@@ -40,10 +38,8 @@ TIMESPEC "TS_clkin" = PERIOD : "clkin_grp" : 20.000 ns HIGH 50.0%; #Osc clk & Ex
 #################
 # NET "clkin"  LOC="R9"  |IOSTANDARD="LVCMOS33"; # Osc clock
 NET "clkin"  LOC="C10"  |IOSTANDARD="LVCMOS33"; # Ext clock
-
 NET "clkin" CLOCK_DEDICATED_ROUTE = FALSE; # Uncoment for SP3A-50
 NET "rstnin" LOC="L7"  |IOSTANDARD="LVCMOS33"; # Reset
-
 ##########
 # SWITCH #
 ##########
@@ -55,7 +51,6 @@ NET "rstnin" LOC="L7"  |IOSTANDARD="LVCMOS33"; # Reset
 #NET "dipsw<5>" LOC="K5" |IOSTANDARD="LVCMOS33"; # SW7-6
 #NET "dipsw<6>" LOC="L6" |IOSTANDARD="LVCMOS33"; # SW7-7
 #NET "dipsw<7>" LOC="L5" |IOSTANDARD="LVCMOS33"; # SW7-8
-
 #######
 # LED #
 #######
@@ -67,7 +62,6 @@ NET "led<4>" LOC="P11" |IOSTANDARD="LVCMOS33" |SLEW="SLOW" |DRIVE=2 |TIG; #LED16
 NET "led<5>" LOC="P12" |IOSTANDARD="LVCMOS33" |SLEW="SLOW" |DRIVE=2 |TIG; #LED17
 NET "led<6>" LOC="T12" |IOSTANDARD="LVCMOS33" |SLEW="SLOW" |DRIVE=2 |TIG; #LED18
 NET "led<7>" LOC="R13" |IOSTANDARD="LVCMOS33" |SLEW="SLOW" |DRIVE=2 |TIG; #LED19
-
 
 #############
 # SelectMap #
@@ -83,9 +77,12 @@ NET "cfg_rdwrn"    LOC="J12" |IOSTANDARD="LVCMOS33"; #
 NET "cfg_busy"     LOC="K12" |IOSTANDARD="LVCMOS33"; # 
 NET "cfg_done"     LOC="P16" |IOSTANDARD="LVCMOS33"; # 
 NET "cfg_done_alt" LOC="K11" |IOSTANDARD="LVCMOS33"; # 
-
 NET "uart_tx" LOC="G1" |IOSTANDARD="LVCMOS33" |SLEW="SLOW" |DRIVE=2 |TIG; # J9.7 yellow
 NET "uart_rx" LOC="F1" |IOSTANDARD="LVCMOS33"; # J9.8 orange
-
 NET "run" LOC="C1" |IOSTANDARD="LVCMOS33" |SLEW="SLOW" |DRIVE=2 |TIG; # J9.1
 NET "trg" LOC="C2" |IOSTANDARD="LVCMOS33" |SLEW="SLOW" |DRIVE=2 |TIG; # J9.2
+NET "clk_shift" LOC="K4" |IOSTANDARD="LVCMOS33" |SLEW="FAST" |DRIVE=2 |TIG; # J9.26
+NET "clk_dcm_sw" LOC="L4" |IOSTANDARD="LVCMOS33" |SLEW="FAST" |DRIVE=2 |TIG; # J9.27
+NET "clk_glitch" LOC="M3" |IOSTANDARD="LVCMOS33" |SLEW="FAST" |DRIVE=2 |TIG; # J9.28
+#Created by Constraints Editor (xc3s400a-ft256-4) - 2024/09/24
+NET "clk_glitch" OFFSET = OUT 20 ns AFTER "clkin";

@@ -31,13 +31,14 @@
 
 // Cryptographic FPGA clock = 24 MHz / 8 = 3 MHz
 `define CLOCK_DIVIDE 2
+`define CLOCK_MULTIPLY 2
 
 
 //================================================ CHIP_SASEBO_GII_CTRL
 module CHIP_SASEBO_GII_CTRL(cfg_din, cfg_mosi, cfg_fcsb, cfg_cclk, 
 								cfg_progn, cfg_csn, cfg_initn, cfg_rdwrn, cfg_busy, 
 								cfg_done, cfg_done_alt, led, clkin, rstnin, uart_rx,
-								uart_tx, run, trg);
+								uart_tx, run, trg, clk_glitch, clk_shift, clk_dcm_sw);
 localparam len_din = 128*2; // N = 0
 localparam len_dout = 128;  // N = 0
 
@@ -55,7 +56,7 @@ localparam len_dout = 128;  // N = 0
    
    // For AES DOM
    input uart_rx;
-   output uart_tx, run, trg;
+   output uart_tx, run, trg, clk_glitch, clk_shift, clk_dcm_sw;
 
    //------------------------------------------------
    // Internal clock
@@ -85,7 +86,7 @@ localparam len_dout = 128;  // N = 0
     wire [7:0] BRAM_addr_for_extin, BRAM_addr_for_extout;
     wire [len_dout - 1:0] extout_data;
     wire[len_din - 1:0] extin_data;
-    reg [7:0] trg_delay, cnt_trg;
+    reg [7:0] trg_delay, cnt_trg, phase, phase_sw;
     reg [14:0] cnt_15;
     wire [7:0] pin, kin, cout;
     reg [127:0] ptxt, key, sreg_ptxt, sreg_key, ctxt;
@@ -123,15 +124,23 @@ localparam len_dout = 128;  // N = 0
             ptxt <= 128'd0;
             key <= 128'd0;
             trg_delay <= 0;
+            phase <= 0;
+            phase_sw <= 0;
         end
         else begin
             if(extin_en) begin
-                if(BRAM_addr_for_extin[1:0] == 2'b01) begin
+                if(BRAM_addr_for_extin == 8'h01) begin
                     ptxt <= extin_data[127:0];
                     key <= extin_data[255:128];
                 end
-                else if(BRAM_addr_for_extin[1:0] == 2'b10) begin
+                else if(BRAM_addr_for_extin == 8'h02) begin
                     trg_delay <= extin_data[7:0];
+                end
+                else if(BRAM_addr_for_extin == 8'h03) begin
+                    phase <= extin_data[7:0];
+                end
+                else if(BRAM_addr_for_extin == 8'h04) begin
+                    phase_sw <= extin_data[7:0];
                 end
             end
         end
@@ -139,7 +148,7 @@ localparam len_dout = 128;  // N = 0
     
     
     VerilogAESWrapper DUT(
-        .ClkxCI(clk),
+        .ClkxCI(clk_glitch),
         .RstxBI(rst_n),
         .PTxDI(pin),
         .KxDI(kin),
@@ -205,6 +214,10 @@ localparam len_dout = 128;  // N = 0
    MK_EXTCLKRST mk_clkrst  (.clkin(clkin), .rstnin(rstnin),
                          .cfg_done(cfg_done & cfg_done_alt),
                          .clk(clk), .rst(rst));
+
+  GLITCH_GEN glitcher (
+        .clk(clk), .rstnin(rstnin), .phase(phase), .phase_sw(phase_sw), 
+        .glitch_en(1'b1), .clkshift(clk_shift), .clk_dcm_sw(clk_dcm_sw), .clkout(clk_glitch), .trigger(trg));
    
 endmodule // CHIP_SASEBO_GII_CTRL
 
@@ -255,7 +268,8 @@ module MK_CLKRST (clkin, rstnin, cfg_done, clk, rst);
    IBUFG u10 (.I(clkin), .O(refclk)); 
 
    DCM_SP #(.CLKIN_PERIOD(41.666),  // Source clock: 24 MHz
-            .CLKDV_DIVIDE(`CLOCK_DIVIDE), // 24 / 8 = 3 MHz
+            //.CLKDV_DIVIDE(`CLOCK_DIVIDE), // 24 / 8 = 3 MHz
+            .CLKDV_MULTIPLY(`CLOCK_MULTIPLY), // 24 * 2 = 48 MHz
             .CLK_FEEDBACK("1X"))
    u11 (.CLKIN(refclk), .CLKFB(clk1x), .RST(rst_dll),
         .PSEN(1'b0), .PSINCDEC (1'b0), .PSCLK(1'b0), .DSSEN(1'b0),
