@@ -75,26 +75,26 @@ glitch_en, clkshift, clk_dcm_sw, clkout, trigger);
     if (~rstnin) begin
       offset_glitch <= 0;
       shift_enable <= 1'b0;
-      incdec <= 1'b0;
+      incdec <= 1'b1;
       phase_adjustable <= 1'b1;
     end else if (phase_adjustable) begin
       if (offset_glitch < phase) begin
         offset_glitch <= offset_glitch + 1;
         shift_enable <= 1'b1;
         phase_adjustable <= 1'b0;
-        incdec <= 1'b1;
+        incdec <= 1'b0;
       end else if (offset_glitch > phase) begin
         offset_glitch <= offset_glitch - 1;
         shift_enable <= 1'b1;
-        incdec <= 1'b0;
+        incdec <= 1'b1;
         phase_adjustable <= 1'b0;
       end else begin
         shift_enable <= 1'b0;
-        incdec <= 1'b0;
+        incdec <= 1'b1;
       end
     end else begin
       shift_enable <= 1'b0;
-      incdec <= 1'b0;
+      incdec <= 1'b1;
     end
     if (rstnin & !phase_adjustable & psdone) begin
       phase_adjustable <= 1'b1;

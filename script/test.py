@@ -27,7 +27,7 @@ RUN = 0x40
 
 ADDR_AES = 0x01
 ADDR_TRG = 0x02
-ADDR_Td  = 0x03
+ADDR_Tp  = 0x03
 ADDR_Tw  = 0x04
 
 #######################################################################################
@@ -83,10 +83,10 @@ def main():
                 sendCommand(WRITE, ADDR_AES, (key << 128) + ptxt, com)
                 #トリガ
                 sendCommand(WRITE, ADDR_TRG, 0xc8, com)
-                #ディレイ
-                sendCommand(WRITE, ADDR_Td, 0xff, com)
-                #幅
-                sendCommand(WRITE, ADDR_Tw, 0x19, com)
+                #Tp
+                sendCommand(WRITE, ADDR_Tp, 0xf0, com)
+                #Tw
+                # sendCommand(WRITE, ADDR_Tw, 0xff, com)
                 # #RUN
                 sendCommand(RUN, None, None, com)
                 

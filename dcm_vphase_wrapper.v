@@ -35,16 +35,14 @@ module DCM_WRAPPER(clkin, rst, phase, clk_shifted, locked_out);
     output clk_shifted, locked_out;
 
    wire    clkadj_tmp, clkadj_bufd, psdone;
-   wire    out1, out2, out3, out4;
+   wire    out1, out2, out3, out4, clk_180;
    
    reg [7:0] offset_glitch;
    reg 	     shift_enable, incdec, phase_adjustable;
    
-   // synthesis attribute CLKOUT_PHASE_SHIFT of u31 is VARIABLE
    DCM  u31
-	 (.CLKIN(clkin), .CLKFB(clkadj_bufd), .RST(rst | config_rst),
-      .PSEN(shift_enable), .PSINCDEC (incdec), .PSCLK(clkin), .DSSEN(1'b0),
-      .CLK0(clkadj_tmp), .STATUS(), .LOCKED(locked), .PSDONE(psdone));
+	 (.CLKIN(clkin), .CLKFB(clkadj_bufd), .RST(rst | config_rst), .PSCLK(clkin), .DSSEN(1'b0),
+      .CLK0(clkadj_tmp), .CLK180(clk_180), .STATUS(), .LOCKED(locked));
 
    assign locked_out = phase_adjustable;
    
@@ -58,7 +56,7 @@ module DCM_WRAPPER(clkin, rst, phase, clk_shifted, locked_out);
    assign config_rst = (out2 | out3 | out4);
 
    BUFG  u32 (.I(clkadj_tmp), .O(clkadj_bufd));
-   assign clk_shifted = clkadj_bufd;
+   assign clk_shifted = clk_180;
    
    //phase shift
    //If the phase is larger than the target value, 
